@@ -1,6 +1,7 @@
 import sys
 import pickle
-from utils import estimate_price
+import numpy as np
+from utils import estimate_price, add_intercept
 
 if __name__ == '__main__':
 
@@ -20,11 +21,11 @@ if __name__ == '__main__':
     try:
         f = open('thetas.pkl', 'rb')
         thetas = pickle.load(f)
-        theta0 = thetas[0]
-        theta1 = thetas[1]
+        if type(thetas) is not np.ndarray or thetas.shape != (2, 1):
+            raise Exception
     except:
-        theta0 = 0
-        theta1 = 0
-    
-    estimated_price = estimate_price(theta0, theta1, mileage)
+        thetas = np.zeros((1, 2))
+
+    X = add_intercept(np.array([[mileage]]))
+    estimated_price = np.squeeze(estimate_price(X, thetas))
     print('The estimated price for a car with mileage {} is:\n{}'.format(mileage, estimated_price))
