@@ -1,9 +1,8 @@
 import sys
+import pickle
 import pandas as pd
 import numpy as np
-import pickle
-from utils import add_intercept, mean, standard_deviation, normalize, fit
-
+from sklearn.linear_model import LinearRegression
 
 if __name__ == '__main__':
     try:
@@ -12,25 +11,16 @@ if __name__ == '__main__':
             raise Exception
         m = data.shape[0]
         X = np.array(data['km'], dtype=float).reshape((m, 1))
-        mean = mean(X)
-        sigma = standard_deviation(X)
-        X = normalize(X, mean, sigma)
-        X = add_intercept(X)
         y = np.array(data['price'], dtype=float).reshape((m, 1))
+        print(X)
+        print(y)
+        model = LinearRegression()
+        model.fit(X, y)
     except FileNotFoundError:
         print('There is no data.csv file')
         sys.exit(1)
-    except:
+    except Exception as e:
         print('data.csv is not well formated')
         sys.exit(1)
-
-    thetas = np.zeros((1, 2))
-    thetas, costs = fit(X, y, thetas)
-    info = {
-        'thetas': thetas,
-        'costs': costs,
-        'mean': mean,
-        'sigma': sigma
-    }
-    info_file = open('learning_info.pkl', 'wb')
-    pickle.dump(info, info_file)
+    model_file = open('sk_model.pkl', 'wb')
+    pickle.dump(model, model_file)

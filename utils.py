@@ -3,11 +3,11 @@ import numpy as np
 def mean(X):
     return np.sum(X) / X.shape[0]
 
-def variance(X):
-    return np.sqrt((1 / X.shape[0]) * np.sum(np.square(X - mean(X))))
+def standard_deviation(X):
+   return np.sqrt((1 / X.shape[0]) * np.sum(np.square(X - mean(X))))
 
-def normalize(X, mean, variance):
-    return (X - mean) / variance if variance != 0 else X - mean
+def normalize(X, mean, sigma):
+    return (X - mean) / sigma if sigma != 0 else X - mean
 
 def add_intercept(X):
     intercept = np.full((X.shape[0], 1), 1)
@@ -18,6 +18,9 @@ def predict(X, thetas):
 
 def compute_cost(X, y, thetas):
     return (1 / (2 * X.shape[0])) * np.sum(np.square(predict(X, thetas) - y))
+
+def mse(y_hat, y):
+    return (1 / y.shape[0]) * np.sum(np.square(y - y_hat))
 
 def fit(X, y, thetas, alpha=0.001, max_iter=10000):
     costs = []

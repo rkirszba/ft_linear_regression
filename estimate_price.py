@@ -23,17 +23,17 @@ if __name__ == '__main__':
         info = pickle.load(f)
         thetas = info['thetas']
         mean = info['mean']
-        variance = info['variance']
+        sigma = info['sigma']
         if type(thetas) is not np.ndarray or thetas.shape != (1, 2):
             raise Exception
-        if type(mean) is not np.float64 or type(variance) is not np.float64:
+        if type(mean) is not np.float64 or type(sigma) is not np.float64:
             raise Exception
     except:
         thetas = np.zeros((1, 2))
         mean = mileage
-        variance = 1
+        sigma = 1
 
-    X = normalize(np.array([[mileage]]), mean, variance)
+    X = normalize(np.array([[mileage]]), mean, sigma)
     X = add_intercept(X)
     estimated_price = np.squeeze(predict(X, thetas))
     print('The estimated price for a car with mileage {} is:\n{}'.format(mileage, estimated_price))
