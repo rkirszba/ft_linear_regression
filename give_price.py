@@ -1,7 +1,7 @@
 import sys
 import pickle
 import numpy as np
-from utils import estimate_price, add_intercept
+from utils import predict, add_intercept, normalize
 
 if __name__ == '__main__':
 
@@ -19,13 +19,21 @@ if __name__ == '__main__':
             sys.exit(0)
 
     try:
-        f = open('thetas.pkl', 'rb')
-        thetas = pickle.load(f)
-        if type(thetas) is not np.ndarray or thetas.shape != (2, 1):
+        f = open('learning_info.pkl', 'rb')
+        info = pickle.load(f)
+        thetas = info['thetas']
+        mean = info['mean']
+        variance = info['variance']
+        if type(thetas) is not np.ndarray or thetas.shape != (1, 2):
+            raise Exception
+        if type(mean) is not np.float64 or type(variance) is not np.float64:
             raise Exception
     except:
         thetas = np.zeros((1, 2))
+        mean = mileage
+        variance = 1
 
-    X = add_intercept(np.array([[mileage]]))
-    estimated_price = np.squeeze(estimate_price(X, thetas))
+    X = normalize(np.array([[mileage]]), mean, variance)
+    X = add_intercept(X)
+    estimated_price = np.squeeze(predict(X, thetas))
     print('The estimated price for a car with mileage {} is:\n{}'.format(mileage, estimated_price))
