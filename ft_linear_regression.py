@@ -1,18 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from stat_utils import mean, standard_deviation
 
-def mean(X):
-    return np.sum(X) / X.shape[0]
-
-def standard_deviation(X):
-   return np.sqrt((1 / X.shape[0]) * np.sum(np.square(X - mean(X))))
-
-def add_intercept(X):
-    intercept = np.full((X.shape[0], 1), 1)
-    return np.append(intercept, X, axis=1)
-
-def mse(y_hat, y):
-    return (1 / y.shape[0]) * np.sum(np.square(y - y_hat))
 
 class FTLinearRegression():
 
@@ -26,6 +15,11 @@ class FTLinearRegression():
         self._thetas = np.zeros((1, 2))
         self._costs = []
 
+    @staticmethod    
+    def _add_intercept(X):
+        intercept = np.full((X.shape[0], 1), 1)
+        return np.append(intercept, X, axis=1)
+    
     def _normalize(self, X):
         return (X - self._mean) / self._sigma if self._sigma != 0 else X - self._mean
 
@@ -38,7 +32,7 @@ class FTLinearRegression():
     def predict(self, X):
         X = self._normalize(X)
         if self._intercept:
-            X = add_intercept(X)
+            X = FTLinearRegression._add_intercept(X)
         return self._predict(X)
 
     def fit(self, X, y):
@@ -46,7 +40,7 @@ class FTLinearRegression():
         self._sigma = standard_deviation(X)
         X = self._normalize(X)
         if self._intercept:
-            X = add_intercept(X)
+            X = FTLinearRegression._add_intercept(X)
         m = X.shape[0]
         for _ in range(self._max_iter):
             y_hat = self._predict(X)
@@ -66,9 +60,3 @@ class FTLinearRegression():
         plt.ylabel('Cost')
         plt.xlabel('Iterations')
         plt.show()
-
-    def get_thetas(self, real_thetas=False):
-        thetas = np.copy(self._thetas)
-        if not real_thetas:
-            thetas[0][1] = np.squeeze(self._normalize(thetas[0][1]))
-        return thetas
