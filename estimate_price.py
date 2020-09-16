@@ -1,7 +1,7 @@
 import sys
 import pickle
 import numpy as np
-from utils import predict, add_intercept, normalize
+from ft_linear_regression import FTLinearRegression
 
 if __name__ == '__main__':
 
@@ -19,21 +19,13 @@ if __name__ == '__main__':
             sys.exit(0)
 
     try:
-        f = open('learning_info.pkl', 'rb')
-        info = pickle.load(f)
-        thetas = info['thetas']
-        mean = info['mean']
-        sigma = info['sigma']
-        if type(thetas) is not np.ndarray or thetas.shape != (1, 2):
-            raise Exception
-        if type(mean) is not np.float64 or type(sigma) is not np.float64:
-            raise Exception
+        f = open('my_model.pkl', 'rb')
+        model = pickle.load(f)
+        X = np.array([[mileage]])
+        estimated_price = np.squeeze(model.predict(X))
+        print('The estimated price for a car with mileage {} is:\n{}'.format(mileage, estimated_price))
     except:
-        thetas = np.zeros((1, 2))
-        mean = mileage
-        sigma = 1
-
-    X = normalize(np.array([[mileage]]), mean, sigma)
-    X = add_intercept(X)
-    estimated_price = np.squeeze(predict(X, thetas))
-    print('The estimated price for a car with mileage {} is:\n{}'.format(mileage, estimated_price))
+        model = FTLinearRegression()
+        X = np.array([[mileage]])
+        estimated_price = np.squeeze(model.predict(X))
+        print('The estimated price for a car with mileage {} is:\n{}'.format(mileage, estimated_price))

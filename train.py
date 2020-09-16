@@ -2,7 +2,7 @@ import sys
 import pandas as pd
 import numpy as np
 import pickle
-from utils import add_intercept, mean, standard_deviation, normalize, fit
+from ft_linear_regression import FTLinearRegression
 
 
 if __name__ == '__main__':
@@ -12,25 +12,21 @@ if __name__ == '__main__':
             raise Exception
         m = data.shape[0]
         X = np.array(data['km'], dtype=float).reshape((m, 1))
-        mean = mean(X)
-        sigma = standard_deviation(X)
-        X = normalize(X, mean, sigma)
-        X = add_intercept(X)
         y = np.array(data['price'], dtype=float).reshape((m, 1))
     except FileNotFoundError:
         print('There is no data.csv file')
+        sys.exit(1)
+    except PermissionError:
+        print('Failed to open data.csv')
         sys.exit(1)
     except:
         print('data.csv is not well formated')
         sys.exit(1)
 
-    thetas = np.zeros((1, 2))
-    thetas, costs = fit(X, y, thetas)
-    info = {
-        'thetas': thetas,
-        'costs': costs,
-        'mean': mean,
-        'sigma': sigma
-    }
-    info_file = open('learning_info.pkl', 'wb')
-    pickle.dump(info, info_file)
+    try:
+        model = FTLinearRegression().fit(X, y)
+        model_file = open('my_model.pkl', 'wb')
+        pickle.dump(model, model_file)
+    except Exception as e:
+        print('Something went wrong: {}'.format(e))
+        sys.exit(1)
