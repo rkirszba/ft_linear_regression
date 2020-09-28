@@ -23,7 +23,7 @@ if __name__ == '__main__':
         model = pickle.load(f)
         X = np.array([[mileage]])
         estimated_price = np.squeeze(model.predict(X))
-        print('The estimated price for a car with mileage {} is:\n{}'.format(mileage, estimated_price))
+        print('The estimated price for a car with mileage {} is:\n{}'.format(mileage, round(float(estimated_price), 2)))
     except:
         model = FTLinearRegression()
         X = np.array([[mileage]])
